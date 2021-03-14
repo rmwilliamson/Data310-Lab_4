@@ -1,37 +1,94 @@
-## Welcome to GitHub Pages
+# Lab 4
 
-You can use the [editor on GitHub](https://github.com/rmwilliamson/Data310-Lab_4/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+# Question 6
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
-
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+### Write your own Python code to import the Boston housing data set (from the sklearn library) and scale the data (not the target) by z-scores. If we use all the features with the Linear Regression to predict the target variable then the root mean squared error (RMSE) is...
 
 ```markdown
-Syntax highlighted code block
+import numpy as np
+import pandas as pd
+from sklearn.datasets import load_boston
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import KFold
+from sklearn.metrics import mean_absolute_error as MAE
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error as MSE
 
-# Header 1
-## Header 2
-### Header 3
+data = load_boston()
+df = pd.DataFrame(data=data.data, columns=data.feature_names)
+y = data.target
 
-- Bulleted
-- List
+X = df.values
+scale = StandardScaler()
+xscaled = scale.fit_transform(X)
 
-1. Numbered
-2. List
+model = LinearRegression()
+model.fit(xscaled,y)
 
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+y_pred = model.predict(xscaled)
+rmse = np.sqrt(MSE(y,y_pred))
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+## RMSE = 4.6792
 
-### Jekyll Themes
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/rmwilliamson/Data310-Lab_4/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+# Question 7
 
-### Support or Contact
+### On the Boston housing data set if we consider the Lasso model with 'alpha=0.03' then the 10-fold cross-validated prediction error is:
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+```markdown
+from sklearn.linear_model import Lasso
+from sklearn.pipeline import Pipeline
+
+kf = KFold(n_splits=10, shuffle=True, random_state=1234)
+model = Lasso(alpha=0.03)
+scale = StandardScaler()
+pipe = Pipeline([('Scale', scale),('Regressor', model)])
+
+def DoKFold(X,y,model):
+  PE = [] #prediction error
+  for idxtrain, idxtest in kf.split(X):
+    Xtrain = X[idxtrain,:]
+    Xtest = X[idxtest,:]
+    ytrain = y[idxtrain]
+    ytest = y[idxtest]
+    pipe.fit(Xtrain,ytrain)
+    yhat = pipe.predict(Xtest)
+    PE.append(MSE(ytest,yhat))
+  return (np.mean(PE))
+  
+ DoKFold(X,y,model)
+ 
+ ```
+ 
+ ## Cross-validated prediction error = 24.2606
+ 
+ 
+# Question 8
+
+### On the Boston housing data set if we consider the Elastic Net model with 'alpha=0.05' and 'l1_ratio=0.9' then the 10-fold cross-validated prediction error is:
+
+```markdown
+from sklearn.linear_model import ElasticNet
+
+kf_en = KFold(n_splits=10, shuffle=True, random_state=1234)
+model = ElasticNet(alpha=0.05,l1_ratio=0.9)
+scale = StandardScaler()
+pipe = Pipeline([('Scale', scale),('Regressor', model)])
+
+def DoKFold(X,y,model):
+  PE = [] #prediction error
+  for idxtrain, idxtest in kf_en.split(X):
+    Xtrain = X[idxtrain,:]
+    Xtest = X[idxtest,:]
+    ytrain = y[idxtrain]
+    ytest = y[idxtest]
+    pipe.fit(Xtrain,ytrain)
+    yhat = pipe.predict(Xtest)
+    PE.append(MSE(ytest,yhat))
+  return (np.mean(PE))
+  
+DoKFold(X,y,model)
+```
+
+## Cross-validated prediction error = 24.3104
