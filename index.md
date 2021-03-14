@@ -92,3 +92,25 @@ DoKFold(X,y,model)
 ```
 
 ## Cross-validated prediction error = 24.3104
+
+
+# Question 9
+
+### If we create all quadratic polynomial (degree=2) features based on the z-scores of the original features and then apply OLS, the root mean squared error is...
+
+```markdown
+from sklearn.preprocessing import PolynomialFeatures
+
+polynomial_features= PolynomialFeatures(degree=2)
+x_poly = polynomial_features.fit_transform(xscaled)
+
+model = LinearRegression()
+model.fit(x_poly, y)
+y_poly_pred = model.predict(x_poly)
+
+rmse = np.sqrt(MSE(y,y_poly_pred))
+```
+
+## RMSE = 2.4484
+
+
