@@ -61,8 +61,8 @@ def DoKFold(X,y,model):
  
  ```
 
- ## Cross-validated prediction error = 24.2606
- ## After turning in my lab, I realized that my error was in not taking the square root of the mean
+## Cross-validated prediction error = 24.2606
+## After turning in my lab, I realized that my error was in not taking the square root of the mean
  
  
 # Question 8
