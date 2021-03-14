@@ -60,7 +60,7 @@ def DoKFold(X,y,model):
  DoKFold(X,y,model)
  
  ```
- 
+
  ## Cross-validated prediction error = 24.2606
  
  
